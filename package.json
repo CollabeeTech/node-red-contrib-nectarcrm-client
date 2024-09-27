@@ -1,0 +1,33 @@
+{
+  "name": "node-red-contrib-nectarcrm-client",
+  "version": "1.1.2",
+  "description": "A Node-RED node to interact with NectarCRM API",
+  "author": "Thiago Valentim",
+  "license": "MIT",
+  "keywords": [
+    "node-red",
+    "nectarcrm",
+    "api"
+  ],
+  "node-red": {
+    "nodes": {
+      "nectarcrm-client": "nodes/nectarcrm-client.js"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
+  },
+  "main": "nodes/nectarcrm-client.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CollabeeTech/node-red-contrib-nectarcrm-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CollabeeTech/node-red-contrib-nectarcrm-client/issues"
+  },
+  "homepage": "https://github.com/CollabeeTech/node-red-contrib-nectarcrm-client#readme"
+}
