@@ -16,16 +16,35 @@ module.exports = function(RED) {
                 let response;
                 let hasMore = true;
                 let page = 1;
+                let requestCount = 0;
+
+                async function delay(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
+                }
+
+                async function fetchData(url, params) {
+                    await delay(1000);
+                    
+                    const response = await axios.get(url, { params });
+
+                    requestCount++;
+
+                    if (requestCount === 5) {
+                        await delay(5000);
+                        requestCount = 0;
+                    }
+
+                    return response;
+                }
 
                 switch (method) {
                     case 'getDeals':
                         let allDeals = [];
                         while (hasMore) {
-                            response = await axios.get(`${nectaCRMApiUrl}/crm/api/1/oportunidades`, {
-                                params: {
-                                    api_token: clientSecret,
-                                    page: page
-                                }
+                            response = await fetchData(`${nectaCRMApiUrl}/crm/api/1/oportunidades`, {
+                                api_token: clientSecret,
+                                page: page,
+                                displayLength: 100
                             });
 
                             allDeals = allDeals.concat(response.data);
@@ -54,11 +73,10 @@ module.exports = function(RED) {
                         let allTasks = [];
 
                         while (hasMore) {
-                            response = await axios.get(`${nectaCRMApiUrl}/crm/api/1/tarefas`, {
-                                params: {
-                                    api_token: clientSecret,
-                                    page: page,
-                                }
+                            response = await fetchData(`${nectaCRMApiUrl}/crm/api/1/tarefas`, {
+                                api_token: clientSecret,
+                                page: page,
+                                displayLength: 100
                             });
 
                             allTasks = allTasks.concat(response.data);
@@ -114,11 +132,9 @@ module.exports = function(RED) {
                         break;
                     case 'getUsers':
 
-                        response = await axios.get(`${nectaCRMApiUrl}/crm/api/1/usuarios`, {
-                            params: {
-                                api_token: clientSecret,
-                                page: -1,
-                            }
+                        response = await fetchData(`${nectaCRMApiUrl}/crm/api/1/usuarios`, {
+                            api_token: clientSecret,
+                            page: -1,
                         });
 
                         const data = response.data;
