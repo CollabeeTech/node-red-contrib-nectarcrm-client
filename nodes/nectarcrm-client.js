@@ -59,6 +59,9 @@ module.exports = function(RED) {
                                 id: deal.id,
                                 created_at: deal.dataCriacao,
                                 updated_at: deal.dataAtualizacao,
+                                estimated_amount: deal.valorTotal,
+                                customer: deal.cliente,
+                                funnel_stage: deal.funilVenda.nome,
                                 user: {
                                     id: deal.responsavel?.id
                                 },
