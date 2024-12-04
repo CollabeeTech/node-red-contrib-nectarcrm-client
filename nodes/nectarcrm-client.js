@@ -151,6 +151,25 @@ module.exports = function(RED) {
                             })
                         };
                         break;
+                    case 'markTaskDone':
+                        const taskId = msg.payload.task_id;
+                        response = await axios.put(
+                            `${nectaCRMApiUrl}/crm/api/1/tarefas/${taskId}`,
+                            {
+                                status: 1
+                            },
+                            {
+                                params: {
+                                    api_token: clientSecret,
+                                },
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }
+                        );
+
+                        msg.payload = response.data;
+                        break;
                     default:
                         node.error("Método não suportado", msg);
                         return;
