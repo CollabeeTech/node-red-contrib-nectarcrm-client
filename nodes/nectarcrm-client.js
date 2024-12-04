@@ -37,6 +37,15 @@ module.exports = function(RED) {
                     return response;
                 }
 
+
+                const types = {
+                    0: 'task',
+                    1: 'call',
+                    2: 'task',
+                    3: 'email',
+                    4: 'task'
+                };
+
                 switch (method) {
                     case 'getDeals':
                         let allDeals = [];
@@ -87,14 +96,6 @@ module.exports = function(RED) {
                             hasMore = response.data.length > 0;
                             page++;
                         }
-
-                        const types = {
-                            0: 'task',
-                            1: 'call',
-                            2: 'task',
-                            3: 'email',
-                            4: 'task'
-                        };
 
                         msg.payload = allTasks.map(task => {
                             return {
@@ -152,9 +153,8 @@ module.exports = function(RED) {
                         };
                         break;
                     case 'markTaskDone':
-                        const taskId = msg.payload.task_id;
                         response = await axios.put(
-                            `${nectaCRMApiUrl}/crm/api/1/tarefas/${taskId}`,
+                            `${nectaCRMApiUrl}/crm/api/1/tarefas/${msg.payload.task_id}`,
                             {
                                 status: 1
                             },
@@ -169,6 +169,27 @@ module.exports = function(RED) {
                         );
 
                         msg.payload = response.data;
+                        break;
+                    case 'getTask':
+                        response = await fetchData(`${nectaCRMApiUrl}/crm/api/1/tarefas/${msg.payload.task_id}`, {
+                            api_token: clientSecret
+                        });
+
+
+                        msg.payload = {
+                            subject: response.titulo,
+                            id: response.id,
+                            created_at: response.dataCriacao,
+                            updated_at: response.dataAtualizacao,
+                            done: response.status === 1 ? true : false,
+                            deal: {
+                                id: response.oportunidade?.id
+                            },
+                            date: response.dataLimite,
+                            type: types[response.tipo],
+                            user_ids: [response.responsavel?.id],
+                        };
+                        
                         break;
                     default:
                         node.error("Método não suportado", msg);
